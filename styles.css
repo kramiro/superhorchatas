@@ -693,7 +693,10 @@ footer {
   }
 }
 
-#horario-card,
+#horario {
+  scroll-margin-top: 10rem;
+}
+
 #ubicacion {
   scroll-margin-top: 7rem;
 }
