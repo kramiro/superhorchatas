@@ -1,101 +1,183 @@
-const menuButton = document.querySelector(".menu-toggle");
-const navigation = document.querySelector(".main-nav");
-const header = document.querySelector(".site-header");
+const menuButton =
+  document.querySelector(".menu-toggle");
 
-menuButton?.addEventListener("click", () => {
-  const isOpen = navigation.classList.toggle("open");
+const navigation =
+  document.querySelector(".main-nav");
 
-  menuButton.setAttribute(
-    "aria-expanded",
-    String(isOpen)
-  );
-});
+const header =
+  document.querySelector(".site-header");
 
-navigation?.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", (event) => {
-    const href = link.getAttribute("href");
 
-    navigation.classList.remove("open");
+/* =============================
+   MENÚ MÓVIL
+============================= */
 
-    menuButton?.setAttribute(
+menuButton?.addEventListener(
+  "click",
+  () => {
+    const isOpen =
+      navigation.classList.toggle("open");
+
+    menuButton.setAttribute(
       "aria-expanded",
-      "false"
+      String(isOpen)
+    );
+  }
+);
+
+
+/* =============================
+   FUNCIÓN DE SCROLL
+============================= */
+
+function scrollToSection(selector) {
+
+  /*
+    INICIO
+    Siempre va hasta arriba.
+  */
+
+  if (
+    selector === "#top" ||
+    selector === "#inicio"
+  ) {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+    return;
+  }
+
+
+  /*
+    Buscar sección.
+  */
+
+  const target =
+    document.querySelector(selector);
+
+  if (!target) {
+    return;
+  }
+
+
+  /*
+    Altura REAL del header sticky.
+  */
+
+  const headerHeight =
+    header
+      ? header.getBoundingClientRect().height
+      : 0;
+
+
+  /*
+    Posición absoluta de la sección.
+  */
+
+  const sectionTop =
+    target.getBoundingClientRect().top +
+    window.pageYOffset;
+
+
+  /*
+    Dejamos la sección exactamente
+    debajo del header.
+  */
+
+  const scrollPosition =
+    sectionTop -
+    headerHeight;
+
+
+  window.scrollTo({
+    top: scrollPosition,
+    behavior: "smooth"
+  });
+}
+
+
+/* =============================
+   LINKS INTERNOS
+============================= */
+
+document
+  .querySelectorAll("[data-scroll]")
+  .forEach((link) => {
+
+    link.addEventListener(
+      "click",
+      (event) => {
+
+        const href =
+          link.getAttribute("href");
+
+        if (
+          !href ||
+          !href.startsWith("#")
+        ) {
+          return;
+        }
+
+
+        /*
+          Evitamos el comportamiento
+          automático del navegador.
+        */
+
+        event.preventDefault();
+
+
+        /*
+          Cerramos menú móvil.
+        */
+
+        navigation?.classList.remove(
+          "open"
+        );
+
+        menuButton?.setAttribute(
+          "aria-expanded",
+          "false"
+        );
+
+
+        /*
+          Ejecutamos nuestro scroll.
+        */
+
+        scrollToSection(href);
+
+
+        /*
+          Actualizamos la URL sin
+          provocar otro salto.
+        */
+
+        if (href !== "#top") {
+          history.replaceState(
+            null,
+            "",
+            href
+          );
+        } else {
+          history.replaceState(
+            null,
+            "",
+            window.location.pathname
+          );
+        }
+      }
     );
 
-    if (!href || !href.startsWith("#")) {
-      return;
-    }
-
-    event.preventDefault();
-
-    if (href === "#top") {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-
-      return;
-    }
-
-    const target = document.querySelector(href);
-
-    if (!target) {
-      return;
-    }
-
-    const headerHeight =
-      header?.getBoundingClientRect().height || 0;
-
-    const extraSpace = 24;
-
-    const targetTop =
-      target.getBoundingClientRect().top +
-      window.scrollY -
-      headerHeight -
-      extraSpace;
-
-    window.scrollTo({
-      top: targetTop,
-      behavior: "smooth",
-    });
-  });
-});
-
-/* También corrige el botón "Cómo llegar" */
-document
-  .querySelectorAll('a[href="#ubicacion"]')
-  .forEach((link) => {
-    link.addEventListener("click", (event) => {
-      if (link.closest(".main-nav")) {
-        return;
-      }
-
-      event.preventDefault();
-
-      const target =
-        document.querySelector("#ubicacion");
-
-      if (!target) {
-        return;
-      }
-
-      const headerHeight =
-        header?.getBoundingClientRect().height || 0;
-
-      const targetTop =
-        target.getBoundingClientRect().top +
-        window.scrollY -
-        headerHeight -
-        24;
-
-      window.scrollTo({
-        top: targetTop,
-        behavior: "smooth",
-      });
-    });
   });
 
-/* Año automático */
+
+/* =============================
+   AÑO AUTOMÁTICO
+============================= */
+
 const year =
   document.querySelector("#year");
 
