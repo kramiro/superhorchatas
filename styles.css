@@ -692,3 +692,8 @@ footer {
     transition: none !important;
   }
 }
+
+#horario-card,
+#ubicacion {
+  scroll-margin-top: 7rem;
+}
